@@ -5,10 +5,10 @@ Demo program for Vialux DMD V7000
 
 @author: Arturo Farolfi
 """
-import sys
-sys.path.append(r"C:\Users\ar\Documents\Dottorato\Digital Micro Mirror\Code\ALP4lib\src")
+# import sys
+# sys.path.append(r"\pyALP4")
 import numpy as np  
-from ALP4 import *
+from pyALP4.ALP4 import *
 import time
 
 # Load the Vialux .dll
@@ -24,20 +24,20 @@ imgSeq  = np.concatenate([imgBlack.ravel(),imgWhite.ravel()])
 
 # Allocate the onboard memory for the image sequence
 DMD.SeqAlloc(nbImg = 2, bitDepth = bitDepth)
-# Send the image sequence as a 1D list/array/numpy array
+# # Send the image sequence as a 1D list/array/numpy array
 DMD.SeqPut(imgData = imgSeq)
-# Set image rate to 50 Hz
-DMD.SetTiming(illuminationTime = 200000)
+# # Set image rate to 50 Hz
+# DMD.SetTiming(illuminationTime = 200000)
 
-# Run the sequence in an infinite loop
-DMD.Run()
+# # Run the sequence in an infinite loop
+# DMD.Run()
 
-time.sleep(10)
+# time.sleep(10)
 
-# Stop the sequence display
-DMD.Halt()
-# Free the sequence from the onboard memory
-DMD.FreeSeq()
-# De-allocate the device
-DMD.Free()
+# # Stop the sequence display
+# DMD.Halt()
+# # Free the sequence from the onboard memory
+# DMD.FreeSeq()
+# # De-allocate the device
+# DMD.Free()
 

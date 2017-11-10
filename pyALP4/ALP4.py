@@ -441,7 +441,7 @@ class ALP4():
         ----------
         
         imgData : list, 1D array or 1D ndarray
-                  Data stream corresponding to a sequence of nSizeX by nSizeX images.
+                  Data stream corresponding to a sequence of nSizeX by nSizeY images.
                   Values has to be between 0 and 255.
         SequenceId : ctypes c_long
                      Sequence identifier. If not specified, set the last sequence allocated in the DMD board memory
@@ -460,23 +460,34 @@ class ALP4():
         
         See ALPLib.AlpSeqPut in the ALP API description for more information.
         '''
+
+        #        pImageData = ct.cast((ct.c_int * len(imgData))(*imgData),ct.c_void_p) 
+
+        data = ''.join(map(chr, imgData.astype('uint8')))
+        print(len(data))
+        # data = imgData.astype(ct.c_char)
+        print(type(data))
+        # print(len(imgData))
         
-        if not SequenceId:
-            SequenceId = self._lastDDRseq 
+        # print(imgData[:3])
+        # # c = ct.create_string_buffer("ahdkljhafsklh")
+        # print(type(b"dhs"))
+        # c = ct.create_string_buffer(data)
+        # print(type(c))
+        # print(len(c))
+        # data = bytes(imgData)
+        # pImageData = ct.cast(ct.c_char_p(data), ct.c_void_p)
+        # pImageData = ct.cast(ct.create_string_buffer(data,len(data)),ct.c_void_p)  
         
-#        pImageData = ct.cast((ct.c_int * len(imgData))(*imgData),ct.c_void_p) 
-            
-        data = ''.join(chr(int(x)) for x in imgData)
-        pImageData = ct.cast(ct.create_string_buffer(data,len(data)),ct.c_void_p)  
 #        data = bytes([int(x) for x in imgData])  
 #        pImageData = (ct.c_ubyte * len(data)).from_buffer_copy(data)
 
 #        data = bytes([int(x) for x in imgData])
 #        pImageData = ct.cast((ct.c_wchar_p * len(data))(*data),ct.c_void_p)         
         
-
-        self._checkError(self._ALPLib.AlpSeqPut(self.ALP_ID,  SequenceId, ct.c_long(PicOffset), ct.c_long(PicLoad), pImageData),'Cannot send image sequence to device.')
-
+        # pImageData = imgData.ctypes.data_as(ct.c_wchar_p)
+        # self._checkError(self._ALPLib.AlpSeqPut(self.ALP_ID,  SequenceId, ct.c_long(PicOffset), ct.c_long(PicLoad), pImageData),'Cannot send image sequence to device.')
+        
 
     def ImgToBitPlane(self, imgArray, bitShift = 0):
         '''
