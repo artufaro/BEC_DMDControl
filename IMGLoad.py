@@ -7,14 +7,15 @@ Demo program for Vialux DMD V7000
 """
 import sys
 # sys.path.append(r"\pyALP4")
+import os
 import numpy as np  
 import time
+from PIL import Image
 
 if sys.version_info[0] < 3:
     from pyALP4.ALP4 import *
 else:
     from pyALP4.ALP4_p3 import *
-
 
 # Load the Vialux .dll
 DMD = ALP4(version = '4.3', libDir = 'C:/Program Files/ALP-4.3/ALP-4.3 API')
@@ -22,20 +23,22 @@ DMD = ALP4(version = '4.3', libDir = 'C:/Program Files/ALP-4.3/ALP-4.3 API')
 DMD.Initialize()
 
 # Binary amplitude image (0 or 1)
-bitDepth = 8
+bitDepth = 1
 images = []
 
-
-# imgBlack = np.zeros([DMD.nSizeY,DMD.nSizeX])
-# imgWhite = np.ones([DMD.nSizeY,DMD.nSizeX])*255
-# images.append(imgWhite)
-# images.append(imgBlack)
-
-for x in np.arange(1, 20, 1):
-    images.append(np.array([ (i%(x*2) > x)*255 for i in range(1024)]*768).reshape( (768, 1024) ))
-
-# imgWhite = np.stack([np.arange(1024)*255/1024]*768)
-# images.append(imgStripe)
+for root, dirs, files in os.walk("./Images"):
+    print("found: ", len(files), " files") 
+    for f in files:
+        if f[-4:]==".bmp":
+            print("found: " +os.path.join(root, f))
+            IM = Image.open(os.path.join(root, f))
+            images.append( np.array(IM.getdata()).reshape( (768, 1024) ) )
+        elif f[-4:]==".npy":
+            print("found: " +os.path.join(root, f))
+            images.append(np.load(os.path.join(root, f)).reshape( (768, 1024) ))
+        else:
+            print("Not used: " + os.path.join(root, f))
+    
 
 imgSeq  = np.concatenate([x.ravel() for x in images])
 # imgSeq = imgBlack.ravel()
@@ -45,13 +48,17 @@ DMD.SeqAlloc(nbImg = len(images), bitDepth = bitDepth)
 # # Send the image sequence as a 1D list/array/numpy array
 DMD.SeqPut(imgData = imgSeq)
 
-# # Set image rate to 50 Hz
+#Set Illumination Time 1s
 DMD.SetTiming(illuminationTime = 1000000)
 
-# # Run the sequence in an infinite loop
-DMD.Run()
+#Set External triggering
+# DMD.ProjControl(ALP_PROJ_MODE, ALP_SLAVE) 
+##DMD.ProjControl(ALP_PROJ_STEP, ALP_LEVEL_LOW)
 
-# time.sleep(180)
+##Run the sequence in an infinite loop
+DMD.Run(loop = True)
+
+# time.sleep(30)
 input("Waiting until Enter...")
 
 # # Stop the sequence display

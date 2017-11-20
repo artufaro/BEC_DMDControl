@@ -466,12 +466,9 @@ class ALP4():
         
 #        pImageData = ct.cast((ct.c_int * len(imgData))(*imgData),ct.c_void_p) 
             
-        data = ''.join(chr(int(x)) for x in imgData)
-        print(type(data), len(data), data[-10:])
-        
-        a = ct.create_string_buffer(data,len(data))
-        print(type(a), ct.sizeof(a), a.raw[:10], a.raw[-10:])
-        
+        # data = ''.join(chr(int(x)) for x in imgData)
+        data = imgData.astype('uint8').tostring()
+
         pImageData = ct.cast(ct.create_string_buffer(data,len(data)),ct.c_void_p)  
 #        data = bytes([int(x) for x in imgData])  
 #        pImageData = (ct.c_ubyte * len(data)).from_buffer_copy(data)
@@ -479,7 +476,6 @@ class ALP4():
 #        data = bytes([int(x) for x in imgData])
 #        pImageData = ct.cast((ct.c_wchar_p * len(data))(*data),ct.c_void_p)         
         
-        print(PicOffset, PicLoad, SequenceId)
         self._checkError(self._ALPLib.AlpSeqPut(self.ALP_ID,  SequenceId, ct.c_long(PicOffset), ct.c_long(PicLoad), pImageData),'Cannot send image sequence to device.')
 
 
@@ -757,7 +753,7 @@ class ALP4():
         This function is only allowed if the ALP is in idle wait state (ALP_PROJ_IDLE), which can be enforced 
         by the AlpProjHalt function.
         
-        Usage: Control(self, controlType, value)
+        Usage: ProjControl(self, controlType, value)
         
         PARAMETERS
         ----------
@@ -798,7 +794,7 @@ class ALP4():
         '''
         self._checkError(self._ALPLib.AlpProjContro(self.ALP_ID, controlType, pointerToStruct),'Error sending request.')  
      
-    def SeqControl(self,controlType,value,  SequenceId = None):
+    def SeqControl(self,controlType, controlValue,  SequenceId = None):
         '''
         This function is used to change the display properties of a sequence. 
         The default values are assigned during sequence allocation by AlpSeqAlloc.
@@ -831,7 +827,7 @@ class ALP4():
         if ( SequenceId == None) and (self._lastDDRseq):
              SequenceId = self._lastDDRseq
         
-        self._checkError(self._ALPLib.AlpSeqControl(self.ALP_ID,  SequenceId, controlType, ct.c_long(value)),'Error sending request.')
+        self._checkError(self._ALPLib.AlpSeqControl(self.ALP_ID,  SequenceId, controlType, ct.c_long(controlValue)),'Error sending request.')
         
     def FreeSeq(self, SequenceId = None):
         '''
