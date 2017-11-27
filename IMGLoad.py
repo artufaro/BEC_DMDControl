@@ -53,7 +53,7 @@ DMD.SetTiming(illuminationTime = 1000000)
 
 #Set External triggering
 # DMD.ProjControl(ALP_PROJ_MODE, ALP_SLAVE) 
-##DMD.ProjControl(ALP_PROJ_STEP, ALP_LEVEL_LOW)
+# DMD.ProjControl(ALP_PROJ_STEP, ALP_LEVEL_LOW)
 
 ##Run the sequence in an infinite loop
 DMD.Run(loop = True)

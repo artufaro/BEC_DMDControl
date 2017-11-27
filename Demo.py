@@ -26,13 +26,17 @@ bitDepth = 8
 images = []
 
 
-# imgBlack = np.zeros([DMD.nSizeY,DMD.nSizeX])
-# imgWhite = np.ones([DMD.nSizeY,DMD.nSizeX])*255
-# images.append(imgWhite)
+imgBlack = np.zeros([DMD.nSizeY,DMD.nSizeX])
+
+imgWhite = np.ones([DMD.nSizeY,DMD.nSizeX])*255
+imgWhite[0:768:100, 0:1024:100] = 0
+imgWhite[350:355, 500:505]  = 0
+# images.append(imgBlack)
+images.append(imgWhite)
 # images.append(imgBlack)
 
-for x in np.arange(1, 20, 1):
-    images.append(np.array([ (i%(x*2) > x)*255 for i in range(1024)]*768).reshape( (768, 1024) ))
+# for x in np.arange(1, 20, 1):
+    # images.append(np.array([ (i%(x*2) > x)*255 for i in range(1024)]*768).reshape( (768, 1024) ))
 
 # imgWhite = np.stack([np.arange(1024)*255/1024]*768)
 # images.append(imgStripe)
@@ -46,7 +50,7 @@ DMD.SeqAlloc(nbImg = len(images), bitDepth = bitDepth)
 DMD.SeqPut(imgData = imgSeq)
 
 # # Set image rate to 50 Hz
-DMD.SetTiming(illuminationTime = 1000000)
+DMD.SetTiming(illuminationTime = 200000)
 
 # # Run the sequence in an infinite loop
 DMD.Run()
