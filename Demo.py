@@ -29,9 +29,11 @@ images = []
 imgBlack = np.zeros([DMD.nSizeY,DMD.nSizeX])
 
 imgWhite = np.ones([DMD.nSizeY,DMD.nSizeX])*255
-imgWhite[0:768:100, 0:1024:100] = 0
-imgWhite[350:355, 500:505]  = 0
-# images.append(imgBlack)
+#imgWhite[0:768:100, 0:1024:100] = 0
+#imgWhite[350:375, 500:525]  = 0
+imgBlack[:, 510:520]= 255
+imgBlack[:, 600:601] = 255
+#images.append(imgBlack)
 images.append(imgWhite)
 # images.append(imgBlack)
 
@@ -41,18 +43,21 @@ images.append(imgWhite)
 # imgWhite = np.stack([np.arange(1024)*255/1024]*768)
 # images.append(imgStripe)
 
+
 imgSeq  = np.concatenate([x.ravel() for x in images])
-# imgSeq = imgBlack.ravel()
 
 # Allocate the onboard memory for the image sequence
 DMD.SeqAlloc(nbImg = len(images), bitDepth = bitDepth)
-# # Send the image sequence as a 1D list/array/numpy array
+
+#Send the image sequence as a 1D list/array/numpy array
 DMD.SeqPut(imgData = imgSeq)
 
-# # Set image rate to 50 Hz
+#Set image rate to 50 Hz
 DMD.SetTiming(illuminationTime = 200000)
 
-# # Run the sequence in an infinite loop
+#invert colors
+DMD.ProjControl(ALP_PROJ_INVERSION, 1)
+#Run the sequence in an infinite loop
 DMD.Run()
 
 # time.sleep(180)

@@ -318,7 +318,7 @@ class ALP4():
             libPath += 'alp4395.dll'
             
         
-        print('Loading linrary: ' + libPath)
+        print('Loading library: ' + libPath)
 
         self._ALPLib = ct.CDLL(libPath)   
             
